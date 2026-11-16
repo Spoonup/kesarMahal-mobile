@@ -1,39 +1,47 @@
 import React from 'react';
 import { View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 import { c } from './theme';
 
-// Hairline tab icons drawn from the brand motifs: jharokha arch, pantry jar, wrapped box, orchard leaf, guest.
-const PATHS: Record<string, React.ReactNode> = {
-  Home: <><Path d="M3 21h18M5 21V11.5a7 7 0 0 1 14 0V21M9.5 21v-7a2.5 2.5 0 0 1 5 0v7" /><Path d="M12 1.6l1.1 1.5L12 4.6l-1.1-1.5z" /></>,
-  Shop: <><Path d="M7 8.5h10l1.6 12.5H5.4z" /><Path d="M9 8.5V7a3 3 0 0 1 6 0v1.5" /><Path d="M9.5 13h5" /></>,
-  Gift: <><Path d="M4.5 10.5h15V21h-15zM3.5 7h17v3.5h-17zM12 7v14" /><Path d="M12 7C10.6 3.4 7 3.6 7 5.4S10 7 12 7zM12 7c1.4-3.6 5-3.4 5-1.6S14 7 12 7z" /></>,
-  Trace: <><Path d="M4.5 19.5c0-8.5 5-13.5 15-15 0 10-5 15-15 15z" /><Path d="M4.5 19.5L14 10M9 15h4.5M11.5 12.5V8.5" /></>,
-  Account: <><Circle cx={12} cy={8} r={3.6} /><Path d="M4.5 21c0-4.2 3.3-7 7.5-7s7.5 2.8 7.5 7" /></>
+// One hairline icon set: 24 grid, 1.1 stroke, round caps and joins, no fills except where a state needs it.
+const P: Record<string, string> = {
+  // tabs
+  Home: 'M6 20.5V11a6 6 0 0 1 12 0v9.5M3.5 20.5h17M9.500 20.500v-4.500a2.500 2.500 0 0 1 5 0v4.500',
+  Shop: 'M5.5 8.5h13l-1 12h-11zM9 8.5V7.5a3 3 0 0 1 6 0v1',
+  Gift: 'M4.5 10.5h15v10h-15zM3.5 7.5h17v3h-17zM12 7.5v13M12 7.5C11 4.5 7.5 4.5 7.5 6.2S10.5 7.5 12 7.5zM12 7.5c1-3 4.5-3 4.5-1.3S13.5 7.5 12 7.5z',
+  Trace: 'M5 19C5 10.500 9.500 5.500 19 5c0 9.500-5 14-14 14zM5 19l8-8',
+  Account: 'M12 4.8a3.6 3.6 0 1 0 0 7.200 3.6 3.6 0 0 0 0-7.200zM5 20c.8-3.600 3.600-5.600 7-5.600s6.200 2 7 5.600',
+  // brand promises
+  valley: 'M3 19l6-10 4.500 7 2.500-3.500L21 19zM17 5.500a1.200 1.200 0 1 0 0 .01',
+  graded: 'M12 3.500a8.500 8.500 0 1 0 0 17 8.500 8.500 0 0 0 0-17zM8.500 12.200l2.500 2.500 4.500-5',
+  sealed: 'M12 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM9.500 13.500L8.500 20.500l3.500-2 3.500 2-1-7',
+  delivery: 'M3 7h10.500v9H3zM13.500 10h4l3 3v3h-7M7 16a1.800 1.800 0 1 0 0 .01M17 16a1.800 1.800 0 1 0 0 .01',
+  // symbols
+  plus: 'M12 5.500v13M5.500 12h13',
+  minus: 'M5.500 12h13',
+  check: 'M5.500 12.500l4.200 4.200L18.500 7.500',
+  close: 'M6.500 6.500l11 11M17.500 6.500l-11 11',
+  chevronLeft: 'M14.500 5.500L8 12l6.500 6.500',
+  chevronRight: 'M9.500 5.500L16 12l-6.500 6.500',
+  arrowLeft: 'M19 12H5.500M11 6l-6 6 6 6',
+  heart: 'M12 20S4 14.800 4 9.200A4.200 4.200 0 0 1 12 7.300a4.200 4.200 0 0 1 8 1.900C20 14.800 12 20 12 20z',
+  diamond: 'M12 4.500l7.500 7.500-7.500 7.500L4.500 12z'
 };
 
+export type IconName = keyof typeof P;
+// `filled` paints the shape in the icon colour (heart saved, diamond reached). Default size 24.
+export const Icon = ({ name, color = c.maroon, size = 24, filled, stroke = 1.1 }: { name: IconName; color?: string; size?: number; filled?: boolean; stroke?: number }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? color : 'none'} stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round"><Path d={P[name]} /></Svg>
+);
+
 export function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  const color = focused ? c.maroon : c.muted;
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={focused ? 1.5 : 1.2} strokeLinecap="round" strokeLinejoin="round">{PATHS[name]}</Svg>
-      {focused ? <View style={{ position: 'absolute', top: -7, width: 5, height: 5, transform: [{ rotate: '45deg' }], backgroundColor: c.gold }} /> : null}
+      <Icon name={name} color={focused ? c.maroon : c.muted} stroke={focused ? 1.25 : 1.1} />
+      {focused ? <View style={{ position: 'absolute', bottom: -6, width: 3, height: 3, borderRadius: 1.5, backgroundColor: c.gold }} /> : null}
     </View>
   );
 }
-
-const FEATURE: Record<string, React.ReactNode> = {
-  valley: <><Path d="M2.5 19.5l6.5-11 4 6.5 2.5-4 6 8.5z" /><Circle cx={17.5} cy={6} r={1.8} /></>,
-  graded: <><Circle cx={12} cy={12} r={9} /><Path d="M8 12.5l2.7 2.7L16 9.5" /></>,
-  sealed: <><Circle cx={12} cy={9.5} r={5.5} /><Path d="M9.5 14.5L8 21.5l4-2 4 2-1.5-7" /><Path d="M12 7l.9 1.9 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2-1.5-1.4 2-.3z" /></>,
-  delivery: <><Path d="M2.5 6.5h11v9.5h-11zM13.5 9.5h4l3 3v3.5h-7" /><Circle cx={6.5} cy={18} r={1.8} /><Circle cx={17} cy={18} r={1.8} /></>
-};
-export const FeatureIcon = ({ name, color = c.maroon }: { name: string; color?: string }) => (
-  <Svg width={26} height={26} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.3} strokeLinecap="round" strokeLinejoin="round">{FEATURE[name]}</Svg>
-);
-export const ArrowLeft = ({ color = c.maroon }: { color?: string }) => (
-  <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"><Path d="M19 12H5M11 6l-6 6 6 6" /></Svg>
-);
-export const Heart = ({ filled, color = c.maroon }: { filled?: boolean; color?: string }) => (
-  <Svg width={22} height={22} viewBox="0 0 24 24" fill={filled ? color : 'none'} stroke={color} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"><Path d="M12 20.5S3.5 15 3.5 8.9A4.4 4.4 0 0 1 12 7.2a4.4 4.4 0 0 1 8.5 1.7C20.5 15 12 20.5 12 20.5z" /></Svg>
-);
+export const FeatureIcon = ({ name, color = c.maroon }: { name: string; color?: string }) => <Icon name={name} color={color} size={26} />;
+export const ArrowLeft = ({ color = c.maroon }: { color?: string }) => <Icon name="arrowLeft" color={color} size={22} />;
+export const Heart = ({ filled, color = c.maroon }: { filled?: boolean; color?: string }) => <Icon name="heart" color={color} size={22} filled={filled} />;

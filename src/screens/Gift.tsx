@@ -8,6 +8,7 @@ import { boxProductOf, fmt, fromPrice, treasuresOf } from '../data';
 import { useQuote, useStore } from '../store';
 import { Button, Chip, ErrorBox, H, Label, Screen, T } from '../ui';
 import { GiftSk } from '../skeletons';
+import { Icon } from '../icons';
 import { BagButton, TopBand } from './parts';
 
 const PAD = 16, GAP = 10;
@@ -27,7 +28,7 @@ export default function Gift({ navigation }: NativeStackScreenProps<any>) {
   // Cheapest pack of each pick; the server prices the whole box.
   const items = boxProduct ? [boxProduct, ...chosen].map(p => ({ p, size: p.sizes.reduce((a, b) => (b.price < a.price ? b : a)) })) : [];
   const quote = useQuote(items.map(({ p, size }) => ({ productId: p.id, sizeId: size.id, qty: 1 })));
-  const w = (width - PAD * 2 - GAP * 2) / 3;
+  const w = Math.floor((width - PAD * 2 - GAP * 2) / 3);
   const toggle = (id: string) => setPicks(cur => { const k = cur.slice(0, box.n); return k.includes(id) ? k.filter(x => x !== id) : k.length >= box.n ? k : [...k, id]; });
   const ready = left === 0 && !!boxProduct && !!quote.data;
   const submit = () => {
@@ -59,7 +60,7 @@ export default function Gift({ navigation }: NativeStackScreenProps<any>) {
           <ScrollView contentContainerStyle={{ padding: PAD, gap: 14 }} keyboardShouldPersistTaps="handled">
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 4 }}>
-                {Array.from({ length: box.n }, (_, i) => <View key={i} style={{ width: 16, height: 16, transform: [{ rotate: '45deg' }], borderWidth: 1, borderColor: c.gold, backgroundColor: i < chosen.length ? c.maroon : 'transparent' }} />)}
+                {Array.from({ length: box.n }, (_, i) => <Icon key={i} name="diamond" size={22} color={i < chosen.length ? c.maroon : c.gold} filled={i < chosen.length} stroke={1.2} />)}
               </View>
               <Text style={{ flex: 1, fontFamily: font.body, fontSize: 13, color: c.soft }}>{!boxProduct ? `The ${box.key} box is not in the pantry right now.` : left > 0 ? `${chosen.length} of ${box.n} chosen · ${left} to go` : 'Box full · ready to wrap'}</Text>
             </View>
@@ -69,9 +70,9 @@ export default function Gift({ navigation }: NativeStackScreenProps<any>) {
                 return (
                   <Pressable key={p.id} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={`${p.name}, ${fmt(fromPrice(p))}`} onPress={() => toggle(p.id)}
                     style={{ width: w, backgroundColor: c.ivory, borderWidth: on ? 2 : 1, borderColor: on ? c.maroon : c.line, opacity: !on && left === 0 ? 0.5 : 1 }}>
-                    <View style={{ aspectRatio: 1, backgroundColor: c.paper }}>{p.img ? <Image source={{ uri: p.img }} contentFit="cover" style={{ flex: 1 }} transition={150} /> : null}</View>
+                    <View style={{ aspectRatio: 1, backgroundColor: c.paper }}>{p.img ? <Image source={{ uri: p.img }} contentFit="cover" style={{ flex: 1, backgroundColor: c.canvas }} transition={150} /> : null}</View>
                     <View style={{ position: 'absolute', top: 6, right: 6, width: 22, height: 22, borderRadius: 11, borderWidth: 1, borderColor: c.maroon, backgroundColor: on ? c.maroon : 'rgba(245,241,234,0.9)', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ color: c.ivory, fontSize: 12 }}>{on ? '✓' : ''}</Text>
+                      {on ? <Icon name="check" size={14} color={c.ivory} stroke={1.5} /> : null}
                     </View>
                     <View style={{ padding: 8, gap: 1 }}>
                       <Text numberOfLines={2} style={{ fontFamily: font.display, fontSize: 15, lineHeight: 17, color: c.maroon }}>{p.name}</Text>

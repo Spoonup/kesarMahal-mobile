@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { c, font, sp, TAP } from './theme';
 import { fmt, fromPrice, type Product } from './data';
 import { friendly } from './api';
+import { Icon } from './icons';
 
 type S<T> = StyleProp<T>;
 export const Label = ({ children, style, color }: { children: React.ReactNode; style?: S<TextStyle>; color?: string }) => (
@@ -16,9 +17,7 @@ export const H = ({ children, size = 30, style, italic, color }: { children: Rea
 export const T = ({ children, style, muted, size = 15, numberOfLines }: { children: React.ReactNode; style?: S<TextStyle>; muted?: boolean; size?: number; numberOfLines?: number }) => (
   <Text numberOfLines={numberOfLines} style={[{ fontFamily: font.light, fontSize: size, lineHeight: size * 1.5, color: muted ? c.muted : c.ink }, style]}>{children}</Text>
 );
-export const Diamond = ({ size = 8, filled = true }: { size?: number; filled?: boolean }) => (
-  <View style={{ width: size, height: size, transform: [{ rotate: '45deg' }], borderWidth: 1.5, borderColor: c.maroon, backgroundColor: filled ? c.maroon : 'transparent' }} />
-);
+export const Diamond = ({ size = 8, filled = true, color = c.maroon }: { size?: number; filled?: boolean; color?: string }) => <Icon name="diamond" size={size * 1.5} color={color} filled={filled} stroke={1.3} />;
 export const Rule = () => (
   <View style={{ flexDirection: 'row', alignItems: 'center', gap: sp.sm }}><View style={s.rule} /><Diamond size={6} /><View style={s.rule} /></View>
 );
@@ -30,7 +29,7 @@ export function Button({ title, onPress, ghost, light, outline, disabled, busy, 
   const box: ViewStyle = outline ? { borderWidth: 1, borderColor: c.goldLight } : ghost ? { borderWidth: 1, borderColor: c.maroon } : { backgroundColor: light ? c.ivory : c.maroon };
   return (
     <Pressable accessibilityRole="button" accessibilityState={{ disabled: !!off, busy: !!busy }} onPress={off ? undefined : onPress}
-      style={({ pressed }) => [s.btn, box, off && { opacity: 0.45 }, pressed && { opacity: 0.8 }, style]}>
+      style={({ pressed }) => [s.btn, box, off && (light ? { backgroundColor: 'rgba(245,241,234,0.72)' } : { opacity: 0.45 }), pressed && { opacity: 0.8 }, style]}>
       {busy ? <ActivityIndicator color={fg} /> : <Text style={{ fontFamily: font.medium, fontSize: 13, letterSpacing: 1.8, color: fg }}>{title.toUpperCase()}</Text>}
     </Pressable>
   );
@@ -46,20 +45,20 @@ export const Chip = ({ label, on, onPress, color }: { label: string; on: boolean
   </Pressable>
 );
 export function Stepper({ qty, onChange }: { qty: number; onChange: (n: number) => void }) {
-  const b = (t: string, d: number, l: string) => <Pressable accessibilityRole="button" accessibilityLabel={l} onPress={() => onChange(qty + d)} style={s.step}><Text style={{ fontSize: 20, color: c.maroon, fontFamily: font.body }}>{t}</Text></Pressable>;
-  return <View style={s.stepper}>{b('−', -1, 'Decrease quantity')}<Text style={{ minWidth: 28, textAlign: 'center', fontFamily: font.medium, fontSize: 16, color: c.ink }}>{qty}</Text>{b('+', 1, 'Increase quantity')}</View>;
+  const b = (t: 'plus' | 'minus', d: number, l: string) => <Pressable accessibilityRole="button" accessibilityLabel={l} onPress={() => onChange(qty + d)} style={s.step}><Icon name={t} size={20} /></Pressable>;
+  return <View style={s.stepper}>{b('minus', -1, 'Decrease quantity')}<Text style={{ minWidth: 28, textAlign: 'center', fontFamily: font.medium, fontSize: 16, color: c.ink }}>{qty}</Text>{b('plus', 1, 'Increase quantity')}</View>;
 }
 // Arch frame (guidelines 07): crops product photography in a jharokha arch.
 export const Arch = ({ uri, w, h, color }: { uri?: string; w: number | `${number}%`; h: number; color?: string }) => (
   <View style={{ width: w, height: h, borderTopLeftRadius: 999, borderTopRightRadius: 999, borderBottomLeftRadius: 4, borderBottomRightRadius: 4, overflow: 'hidden', backgroundColor: c.paper, borderWidth: 1, borderColor: color || c.gold }}>
-    {uri ? <Image source={{ uri }} contentFit="cover" style={{ flex: 1 }} transition={150} /> : null}
+    {uri ? <Image source={{ uri }} contentFit="cover" style={{ flex: 1, backgroundColor: c.canvas }} transition={150} /> : null}
   </View>
 );
 export const Field = ({ label, error, style, ...p }: TextInputProps & { label: string; error?: string }) => (
   <View style={{ gap: 4 }}>
     <View style={[s.field, { borderColor: error ? c.error : c.line }]}>
       <Text style={{ fontFamily: font.body, fontSize: 11.5, color: c.muted }}>{label}</Text>
-      <TextInput placeholderTextColor={c.muted} accessibilityLabel={label} style={[{ fontFamily: font.body, fontSize: 17, color: c.ink, paddingVertical: 4, minHeight: 28 }, style]} {...p} />
+      <TextInput placeholderTextColor={c.muted} accessibilityLabel={label} style={[{ fontFamily: font.body, fontSize: 17, color: c.ink, paddingVertical: 0, minHeight: 24 }, style]} {...p} />
     </View>
     {error ? <Text style={{ fontFamily: font.body, fontSize: 12.5, color: c.error }}>{error}</Text> : null}
   </View>
@@ -69,7 +68,7 @@ export const ErrorBox = ({ error, retry }: { error: unknown; retry?: () => void 
   <View style={[s.center, { gap: sp.md }]}><T style={{ color: c.error, textAlign: 'center' }}>{friendly(error)}</T>{retry ? <Button title="Try again" ghost onPress={retry} /> : null}</View>
 );
 export const Empty = ({ title, text, cta }: { title: string; text?: string; cta?: React.ReactNode }) => (
-  <View style={[s.center, { gap: sp.sm }]}><Diamond size={10} filled={false} /><H size={26} style={{ textAlign: 'center' }}>{title}</H>{text ? <T muted style={{ textAlign: 'center' }}>{text}</T> : null}{cta}</View>
+  <View style={[s.center, { gap: sp.sm, alignSelf: 'stretch', paddingHorizontal: sp.lg }]}><Diamond size={10} filled={false} /><H size={26} style={{ textAlign: 'center', alignSelf: 'stretch' }}>{title}</H>{text ? <T muted style={{ textAlign: 'center', alignSelf: 'stretch' }}>{text}</T> : null}{cta}</View>
 );
 export const Row = ({ k, v, bold, color }: { k: string; v: string; bold?: boolean; color?: string }) => (
   <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: sp.md, paddingVertical: 4 }}>
@@ -87,7 +86,7 @@ export function ProductCard({ p, width, onPress, onAdd, added }: { p: Product; w
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={`${p.name}, ${price}`} onPress={onPress} style={{ width, backgroundColor: c.ivory, borderWidth: 1, borderColor: c.line }}>
       <View style={{ aspectRatio: 1, backgroundColor: c.paper }}>
-        {p.img ? <Image source={{ uri: p.img }} contentFit="cover" style={{ flex: 1 }} transition={150} /> : null}
+        {p.img ? <Image source={{ uri: p.img }} contentFit="cover" style={{ flex: 1, backgroundColor: c.canvas }} transition={150} /> : null}
         <Badge label={p.category} color={p.color} style={{ position: 'absolute', top: 8, left: 8 }} />
       </View>
       <View style={{ flex: 1, padding: 10, paddingLeft: 12, gap: 2 }}>
@@ -95,7 +94,7 @@ export function ProductCard({ p, width, onPress, onAdd, added }: { p: Product; w
         <Text numberOfLines={1} style={{ fontFamily: font.light, fontSize: 11, color: c.soft }}>{p.sizes.map(z => z.label).filter(Boolean).slice(0, 3).join(' · ')}</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: 6, minHeight: 42 }}>
           <Text style={{ fontFamily: font.medium, fontSize: 13.5, color: c.ink }}>{price}</Text>
-          {onAdd && p.available ? <Pressable accessibilityRole="button" accessibilityLabel={`Add ${p.name} to bag`} hitSlop={6} onPress={onAdd} style={[s.plus, { backgroundColor: added ? c.pine : c.maroon }]}><Text style={{ color: c.ivory, fontSize: 18, fontFamily: font.body }}>{added ? '✓' : '+'}</Text></Pressable> : null}
+          {onAdd && p.available ? <Pressable accessibilityRole="button" accessibilityLabel={`Add ${p.name} to bag`} hitSlop={6} onPress={onAdd} style={[s.plus, { backgroundColor: added ? c.pine : c.maroon }]}><Icon name={added ? 'check' : 'plus'} size={20} color={c.ivory} /></Pressable> : null}
         </View>
       </View>
     </Pressable>
@@ -108,7 +107,7 @@ const s = StyleSheet.create({
   chip: { minHeight: 38, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 100, borderWidth: 1 },
   stepper: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: c.line, borderRadius: 2 },
   step: { width: TAP, height: TAP, alignItems: 'center', justifyContent: 'center' },
-  field: { borderWidth: 1, backgroundColor: c.ivory, paddingHorizontal: 14, paddingVertical: 8 },
+  field: { borderWidth: 1, backgroundColor: c.ivory, paddingHorizontal: 14, paddingVertical: 6 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: sp.lg },
   plus: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' }
 });

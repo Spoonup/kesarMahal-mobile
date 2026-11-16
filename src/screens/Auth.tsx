@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { Image } from 'expo-image';
+import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { api, friendly } from '../api';
 import { brand } from '../content';
@@ -15,13 +17,15 @@ const markWelcomed = () => AsyncStorage.setItem(WELCOMED, '1').catch(() => {});
 
 export function Welcome({ navigation }: NativeStackScreenProps<any>) {
   // Only an explicit choice gets past this screen: browsing as a guest, or a completed sign-in. Backing out of sign-in returns here.
+  const focused = useIsFocused(); // Welcome stays mounted under SignIn; only the focused screen may set the bar
   const guest = async () => { await markWelcomed(); navigation.reset({ index: 0, routes: [{ name: 'Tabs' }] }); };
   return (
     <Screen edges={['top', 'bottom']} style={{ backgroundColor: c.maroon }}>
+      {focused ? <StatusBar style="light" /> : null}
       <View style={{ flex: 1, padding: sp.lg, justifyContent: 'space-between' }}>
         <View style={{ alignItems: 'center', gap: sp.md, marginTop: sp.xl }}>
-          <View style={{ width: 230, height: 300, borderTopLeftRadius: 115, borderTopRightRadius: 115, overflow: 'hidden', borderWidth: 1.5, borderColor: c.goldLight }}>
-            <Image source={require('../../assets/brand/km-logo.jpg')} contentFit="cover" style={{ flex: 1 }} accessibilityLabel={brand.name} />
+          <View style={{ width: 270, height: 270, borderTopLeftRadius: 135, borderTopRightRadius: 135, overflow: 'hidden', borderWidth: 1.5, borderColor: c.goldLight, backgroundColor: c.canvas }}>
+            <Image source={require('../../assets/brand/km-logo.jpg')} contentFit="contain" style={{ flex: 1 }} accessibilityLabel={brand.name} />
           </View>
           <H size={34} color={c.ivory} italic style={{ textAlign: 'center' }}>{brand.welcomeLine}</H>
           <Label color={c.goldLight}>{brand.tagline}</Label>

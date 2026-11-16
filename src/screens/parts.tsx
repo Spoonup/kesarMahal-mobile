@@ -3,7 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { c, font, sp, TAP } from '../theme';
 import { useStore } from '../store';
-import { ArrowLeft } from '../icons';
+import { ArrowLeft, Icon } from '../icons';
 
 export function BagButton() {
   const nav = useNavigation<any>();
@@ -28,7 +28,7 @@ export function BackBar({ title, right }: { title?: string; right?: React.ReactN
   const nav = useNavigation<any>();
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 8 }}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={() => nav.goBack()} style={{ width: TAP, height: TAP, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 30, color: c.maroon, fontFamily: font.body }}>‹</Text></Pressable>
+      <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={() => nav.goBack()} style={{ width: TAP, height: TAP, justifyContent: 'center', alignItems: 'center' }}><Icon name="chevronLeft" size={26} /></Pressable>
       {title ? <Text style={{ fontFamily: font.display, fontSize: 22, color: c.maroon }}>{title}</Text> : null}
       <View style={{ minWidth: TAP, alignItems: 'flex-end' }}>{right}</View>
     </View>

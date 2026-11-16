@@ -28,15 +28,15 @@ export default function Bag({ navigation }: NativeStackScreenProps<any>) {
               const size = p?.sizes.find(z => z.id === l.sizeId);
               return (
                 <View key={bagKey(l)} style={{ flexDirection: 'row', gap: sp.md, alignItems: 'center' }}>
-                  <View style={{ width: 64, height: 76, backgroundColor: c.paper }}>{p?.img ? <Image source={{ uri: p.img }} style={{ flex: 1 }} contentFit="cover" /> : null}</View>
+                  <View style={{ width: 64, height: 76, backgroundColor: c.paper }}>{p?.img ? <Image source={{ uri: p.img }} style={{ flex: 1, backgroundColor: c.canvas }} contentFit="cover" /> : null}</View>
                   <View style={{ flex: 1, gap: 2 }}>
                     <H size={19}>{p?.name ?? 'Unavailable item'}</H>
                     <T muted size={13}>{size?.label}</T>
-                    <Pressable accessibilityRole="button" onPress={() => remove(bagKey(l))} style={{ minHeight: 32, justifyContent: 'center' }}><Text style={{ fontFamily: font.body, fontSize: 12.5, color: c.muted, textDecorationLine: 'underline' }}>Remove</Text></Pressable>
+                    <Pressable accessibilityRole="button" onPress={() => remove(bagKey(l))} style={{ minHeight: 44, justifyContent: 'center' }}><Text style={{ fontFamily: font.body, fontSize: 12.5, color: c.muted, textDecorationLine: 'underline' }}>Remove</Text></Pressable>
                   </View>
                   <View style={{ alignItems: 'flex-end', gap: 4 }}>
                     <Stepper qty={l.qty} onChange={n => setQty(bagKey(l), n)} />
-                    <T style={{ fontFamily: font.medium }}>{pl ? fmt(pl.lineTotal) : '…'}</T>
+                    <T style={{ fontFamily: font.medium }}>{pl ? fmt(pl.baseAmount) : '…'}</T>
                   </View>
                 </View>
               );
@@ -48,7 +48,7 @@ export default function Bag({ navigation }: NativeStackScreenProps<any>) {
                   <Label>{g ? `${g.tier} gift box · ${g.colour}` : 'Gift box'}</Label>
                   {gl.map(l => <T key={bagKey(l)} size={14}>{byId(l.productId)?.name ?? 'Unavailable item'}</T>)}
                   {g?.note ? <T style={{ fontFamily: font.displayItalic, fontSize: 18 }}>“{g.note}”</T> : null}
-                  <Pressable accessibilityRole="button" onPress={() => Alert.alert('Remove gift box?', undefined, [{ text: 'Cancel', style: 'cancel' }, { text: 'Remove', style: 'destructive', onPress: () => removeGift(id) }])} style={{ minHeight: 32, justifyContent: 'center' }}>
+                  <Pressable accessibilityRole="button" onPress={() => Alert.alert('Remove gift box?', undefined, [{ text: 'Cancel', style: 'cancel' }, { text: 'Remove', style: 'destructive', onPress: () => removeGift(id) }])} style={{ minHeight: 44, justifyContent: 'center' }}>
                     <Text style={{ fontFamily: font.body, fontSize: 12.5, color: c.muted, textDecorationLine: 'underline' }}>Remove box</Text>
                   </Pressable>
                 </View>

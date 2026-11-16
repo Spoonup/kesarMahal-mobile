@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { Image } from 'expo-image';
+import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PROMISES } from '../content';
 import { c, font } from '../theme';
 import { fmt } from '../data';
-import { FeatureIcon, Heart } from '../icons';
+import { FeatureIcon, Heart, Icon } from '../icons';
 import { useStore } from '../store';
 import { Badge, Button, Empty, H, Label, Screen, T } from '../ui';
 import { BackBar, RoundBack } from './parts';
@@ -31,16 +32,16 @@ export default function Product({ navigation, route }: NativeStackScreenProps<an
     if (err) return Alert.alert('Bag is full', err);
     setDone(true);
   };
-  const step = (d: number, label: string, t: string) => (
+  const step = (d: number, label: string, t: 'plus' | 'minus') => (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={() => { setQty(n => Math.max(1, n + d)); setDone(false); }} style={{ width: 44, height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 22, color: c.maroon, fontFamily: font.body }}>{t}</Text>
+      <Icon name={t} size={22} />
     </Pressable>
   );
   return (
     <View style={{ flex: 1, backgroundColor: c.ivory }}>
       <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
         <View style={{ width, height: width * 0.95, backgroundColor: c.paper }}>
-          {p.img ? <Image source={{ uri: p.img }} contentFit="cover" style={{ flex: 1 }} transition={150} accessibilityLabel={p.name} /> : null}
+          {p.img ? <Image source={{ uri: p.img }} contentFit="cover" style={{ flex: 1, backgroundColor: c.canvas }} transition={150} accessibilityLabel={p.name} /> : null}
         </View>
         <View style={{ marginTop: -22, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor: c.ivory, paddingHorizontal: 24, paddingTop: 24, paddingBottom: 28, gap: 14 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -76,6 +77,8 @@ export default function Product({ navigation, route }: NativeStackScreenProps<an
           </View>
         </View>
       </ScrollView>
+      <StatusBar style="light" />
+      <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: inset.top, backgroundColor: 'rgba(42,30,26,0.4)' }} />
       <View style={{ position: 'absolute', top: inset.top + 8, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between' }} pointerEvents="box-none">
         <RoundBack onPress={() => navigation.goBack()} />
         <Pressable accessibilityRole="button" accessibilityLabel={isSaved ? 'Remove from saved' : 'Save'} accessibilityState={{ selected: isSaved }} onPress={() => toggleSaved(p.id)}
@@ -87,11 +90,11 @@ export default function Product({ navigation, route }: NativeStackScreenProps<an
         {p.available ? (
           <>
             <View style={{ flexDirection: 'row', alignItems: 'center', height: 54, borderWidth: 1, borderColor: c.line, backgroundColor: c.ivory }}>
-              {step(-1, 'Decrease quantity', '−')}
+              {step(-1, 'Decrease quantity', 'minus')}
               <Text style={{ minWidth: 40, textAlign: 'center', fontFamily: font.medium, fontSize: 17, color: c.ink }}>{qty}{size?.label ? <Text style={{ fontSize: 11, color: c.soft }}> × {size.label}</Text> : null}</Text>
-              {step(1, 'Increase quantity', '+')}
+              {step(1, 'Increase quantity', 'plus')}
             </View>
-            <Button title={done ? 'Added to bag ✓' : `Add to bag · ${fmt(size.price * qty)}`} onPress={done ? () => navigation.navigate('Bag') : addToBag} style={{ flex: 1, minHeight: 54, paddingHorizontal: 8 }} />
+            <Button title={done ? 'Added to bag' : `Add to bag · ${fmt(size.price * qty)}`} onPress={done ? () => navigation.navigate('Bag') : addToBag} style={{ flex: 1, minHeight: 54, paddingHorizontal: 8 }} />
           </>
         ) : <Button title="Sold out" disabled onPress={() => {}} style={{ flex: 1, minHeight: 54 }} />}
       </View>

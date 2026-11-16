@@ -34,7 +34,7 @@ const theme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: c
 
 function Tabs() {
   return (
-    <Tab.Navigator screenOptions={({ route }) => ({ headerShown: false, tabBarIcon: ({ focused }) => <TabIcon name={route.name} focused={focused} />, tabBarActiveTintColor: c.maroon, tabBarInactiveTintColor: c.muted, tabBarLabelStyle: { fontFamily: font.medium, fontSize: 10.5, letterSpacing: 0.4, marginTop: 2 }, tabBarStyle: { backgroundColor: c.ivory, borderTopColor: c.line, borderTopWidth: 1, paddingTop: 8 }, tabBarItemStyle: { minHeight: 44 } })}>
+    <Tab.Navigator screenOptions={({ route }) => ({ headerShown: false, tabBarIcon: ({ focused }) => <TabIcon name={route.name} focused={focused} />, tabBarActiveTintColor: c.maroon, tabBarInactiveTintColor: c.muted, tabBarLabelStyle: { fontFamily: font.light, fontSize: 9.5, letterSpacing: 0.9, marginTop: 6 }, tabBarStyle: { backgroundColor: c.ivory, borderTopColor: c.line, borderTopWidth: 1, paddingTop: 8 }, tabBarItemStyle: { minHeight: 44 } })}>
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Shop" component={Shop} />
       <Tab.Screen name="Gift" component={Gift} />

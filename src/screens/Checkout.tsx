@@ -20,7 +20,7 @@ const validate = (f: F) => {
   if (f.name.trim().length < 2) e.name = 'Enter your full name (at least 2 letters).';
   if (!/^\d{10}$/.test(f.phone)) e.phone = 'Enter a 10-digit mobile number.';
   if (!/^\S+@\S+\.\S+$/.test(f.email.trim())) e.email = 'Enter a valid email address.';
-  if (f.line1.trim().length < 3) e.line1 = 'Enter your address.';
+  if (f.line1.trim().length < 5) e.line1 = 'Enter your address (at least 5 characters).';
   if (f.city.trim().length < 2) e.city = 'Enter your city.';
   if (!/^\d{6}$/.test(f.pincode)) e.pincode = 'Enter a 6-digit pincode.';
   return e;
